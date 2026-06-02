@@ -20,7 +20,7 @@ export async function GET(
     return new NextResponse(pdfBuffer, {
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="zygnal-astro-${token}.pdf"`,
+        "Content-Disposition": `attachment; filename="zygnal-compatibility-${token}.pdf"`,
       },
     });
   } catch (err) {

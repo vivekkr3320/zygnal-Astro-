@@ -464,6 +464,7 @@ export default function ReportPage() {
                     {report.narrative?.careerWealth}
                   </p>
                 </div>
+
               )}
 
               {/* Module: Relationships */}
@@ -496,12 +497,7 @@ export default function ReportPage() {
         {/* ══════════════════════════════════════
             GRID BLOCK 4: HIGHLIGHTS & COSMIC ADVICE
             ══════════════════════════════════════ */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 print:block print:space-y-12">
-              ) : (
-                <p className="text-sm text-[#c8c4d4]">Loading forecast...</p>
-              )}
-            </div>
-          )}
+        
           {activeMainTab === 'report' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 print:block print:space-y-12">
           {/* Highlights */}
@@ -523,7 +519,7 @@ export default function ReportPage() {
               {report.narrative?.cosmicAdvice}
             </p>
           </div>
-        </div>
+          )}
 
         {/* Print recovery reminder at page footer */}
         <div className="text-center pt-16 border-t border-[#d4af37]/10 mt-16 print:hidden">
