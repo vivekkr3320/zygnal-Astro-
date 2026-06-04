@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import posthog from "posthog-js";
 
 /* ═══════════════════════════════════════════════════
    ZYGNAL ASTRO — CINEMATIC ONBOARDING RITUAL
@@ -211,6 +212,7 @@ export default function OnboardingForm() {
   };
 
   useEffect(() => {
+    posthog.capture("Start Onboarding");
     return () => {
       if (audioCtxRef.current) {
         oscillatorsRef.current.forEach((o) => { try { o.stop(); } catch {} });
@@ -233,6 +235,7 @@ export default function OnboardingForm() {
     setIsLoading(true);
     setLoadingStep(0);
     try {
+      posthog.capture("Payment Started", { email });
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
       const res = await fetch("/api/payments/checkout", {
         method: "POST",
@@ -280,6 +283,7 @@ export default function OnboardingForm() {
         setPollingStatus(data.status);
         if (data.status === "COMPLETED") {
           clearInterval(interval);
+          posthog.capture("Report Generated", { token });
           setServerCalculations(data.calculations || []);
           setServerNarrative(data.narrative || null);
           setIsPaid(true);
@@ -317,6 +321,7 @@ export default function OnboardingForm() {
           }),
         });
         if (!res.ok) throw new Error("Mock capture failed.");
+        posthog.capture("Payment Success", { email, isMock: true });
         pollReportStatus(reportToken);
       } else {
         const rp = (window as any).Razorpay;
@@ -327,6 +332,7 @@ export default function OnboardingForm() {
           name: "Zygnal Astro", description: "Premium Celestial Blueprint",
           order_id: orderId,
           handler: async (response: any) => {
+            posthog.capture("Payment Success", { email, isMock: false });
             // Trigger capture manually for local testing since webhook isn't configured
             try {
               await fetch("/api/payments/mock-capture", {

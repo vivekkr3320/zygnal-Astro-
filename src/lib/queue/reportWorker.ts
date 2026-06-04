@@ -4,6 +4,7 @@ import { redisConnection } from "../redis";
 import { prisma } from "../db";
 import { sendReportAccessEmail } from "../email";
 import { calculateNatalParameters, generateAstrologyReport } from "../astrologyEngine";
+import * as Sentry from "@sentry/nextjs";
 
 // Core procedural generator logic shared between BullMQ and In-Memory Fallbacks
 export async function processReportGeneration(reportId: string) {
@@ -17,6 +18,12 @@ export async function processReportGeneration(reportId: string) {
 
   if (!report) {
     throw new Error(`Report not found in database: ${reportId}`);
+  }
+
+  // Prevent duplicate processing
+  if (report.status === "COMPLETED" || report.status === "PROCESSING") {
+    console.log(`[Worker] Skipping report ${reportId} - status is already ${report.status}`);
+    return;
   }
 
   // Update status to PROCESSING
@@ -65,6 +72,9 @@ export async function processReportGeneration(reportId: string) {
     console.log(`[Worker] Successfully completed processing report: ${reportId}`);
   } catch (err) {
     console.error(`[Worker] Error generating report: ${reportId}`, err);
+    Sentry.captureException(err, {
+      extra: { reportId }
+    });
     // Set status to FAILED in the database for analytics
     await prisma.report.update({
       where: { id: reportId },

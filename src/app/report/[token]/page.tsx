@@ -6,6 +6,7 @@ import ForecastCard from "@/components/ui/ForecastCard";
 import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import Navbar from "@/components/ui/Navbar";
+import posthog from "posthog-js";
 
 // Dynamically import AstroWheel client side to prevent server hydration mismatch
 const AstroWheel = dynamic(() => import("@/components/ui/AstroWheel"), { ssr: false });
@@ -66,6 +67,7 @@ export default function ReportPage() {
           setTimeout(fetchReport, 2000);
         } else {
           setReport(data);
+          posthog.capture("Report View", { token, status: data.status });
           setLoading(false);
         }
       } catch (err: any) {

@@ -40,7 +40,7 @@ export async function POST(request: Request) {
     });
 
     // Queue generation
-    if (result.status === "PROCESSED" && result.report) {
+    if (result.status === "PROCESSED" && result.report && result.report.status === "QUEUED") {
       await queueReportGeneration(result.report.id);
       console.log(`[Mock Capture] Processed success capture and queued generator for: ${result.report.id}`);
     }

@@ -3,6 +3,8 @@ import { Cinzel, Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeContext";
 import Script from "next/script";
+import { PostHogProvider } from "@/components/providers/PostHogProvider";
+import { Analytics } from "@vercel/analytics/react";
 
 const cinzel = Cinzel({
   variable: "--font-cinzel",
@@ -56,7 +58,12 @@ export default function RootLayout({
       className={`${cinzel.variable} ${cormorant.variable} ${inter.variable} h-full`}
     >
       <body className="min-h-full flex flex-col bg-void text-star-white antialiased">
-        <ThemeProvider>{children}</ThemeProvider>
+        <PostHogProvider>
+          <ThemeProvider>
+            {children}
+            <Analytics />
+          </ThemeProvider>
+        </PostHogProvider>
         <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
       </body>
     </html>

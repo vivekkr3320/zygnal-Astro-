@@ -65,7 +65,7 @@ export async function POST(request: Request) {
       });
 
       // 3. Queue Background generation on new successes
-      if (result.status === "PROCESSED" && result.report) {
+      if (result.status === "PROCESSED" && result.report && result.report.status === "QUEUED") {
         await queueReportGeneration(result.report.id);
         console.log(`[Webhook] Success queued report worker for: ${result.report.id}`);
       }
