@@ -4,14 +4,15 @@ import { generateForecast } from "@/lib/forecastEngine";
 
 export async function GET(
   request: Request,
-  { params }: { params: { token: string } }
+  { params }: { params: Promise<{ token: string }> }
 ) {
+  const { token } = await params;
   const url = new URL(request.url);
   const dateParam = url.searchParams.get("date");
   const targetDate = dateParam ? new Date(dateParam) : new Date();
 
   const report = await prisma.report.findUnique({
-    where: { token: params.token },
+    where: { token },
     include: { payment: true },
   });
   if (!report) {

@@ -519,6 +519,7 @@ export default function ReportPage() {
               {report.narrative?.cosmicAdvice}
             </p>
           </div>
+          </div>
           )}
 
         {/* Print recovery reminder at page footer */}

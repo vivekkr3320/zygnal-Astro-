@@ -7,10 +7,10 @@ const resend = new Resend(process.env.RESEND_API_KEY || "re_mock_key");
 
 export async function POST(
   request: Request,
-  { params }: { params: { token: string } }
+  { params }: { params: Promise<{ token: string }> }
 ) {
   try {
-    const token = params.token;
+    const { token } = await params;
 
     // Retrieve report to get email destination
     const report = await prisma.report.findUnique({

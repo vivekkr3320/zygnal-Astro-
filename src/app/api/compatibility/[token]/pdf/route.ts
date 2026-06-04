@@ -4,10 +4,10 @@ import { generateCompatibilityPdf } from "@/lib/pdf/generateCompatibilityPdf";
 
 export async function GET(
   request: Request,
-  { params }: { params: { token: string } }
+  { params }: { params: Promise<{ token: string }> }
 ) {
   try {
-    const { token } = params;
+    const { token } = await params;
     const report = await prisma.report.findUnique({
       where: { token },
       include: { payment: true },
@@ -17,7 +17,7 @@ export async function GET(
     }
     // Generate PDF buffer
     const pdfBuffer = await generateCompatibilityPdf(report);
-    return new NextResponse(pdfBuffer, {
+    return new NextResponse(new Uint8Array(pdfBuffer), {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="zygnal-compatibility-${token}.pdf"`,
